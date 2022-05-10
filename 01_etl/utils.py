@@ -1,7 +1,10 @@
+import json
+import datetime
 import logging
 import time
 from functools import wraps
 
+from config import last_state_file_path
 
 logger = logging.getLogger(__name__)
 
@@ -38,3 +41,16 @@ def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10):
                         n += 1
         return inner
     return func_wrapper
+
+
+def set_last_update():
+    with open(last_state_file_path, 'w') as f:
+        now = datetime.datetime.now()
+        data_template = {"last_update": now.strftime("%Y-%m-%d %H:%M:%S")}
+        json.dump(data_template, f, indent=4)
+
+
+def get_last_update():
+    with open(last_state_file_path, 'r') as f:
+        data = json.load(f)
+        return data['last_update']
