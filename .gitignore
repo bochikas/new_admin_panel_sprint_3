@@ -3,3 +3,4 @@
 tessst.py
 .env
 __pycache__
+01_etl/addons/last_state.json
