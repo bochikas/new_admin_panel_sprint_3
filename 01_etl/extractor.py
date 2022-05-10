@@ -12,25 +12,16 @@ class PostgresExtractor:
     def __init__(self, connection):
         self.connection = connection
 
-
-def get_postgres_data(conn):
-    cursor = conn.cursor()
-    try:
-        cursor.execute(all_data_query)
-        row = cursor.fetchall()
-        set_last_update()
-        return row
-    except (Exception, DatabaseError) as error:
-        logger.error(error)
-
-
-def get_updated_data(conn, last_update_time):
-    cursor = conn.cursor()
-    try:
-        cursor.execute(last_update_query % last_update_time)
-        row = cursor.fetchall()
-        set_last_update()
-        return row
-    except (Exception, DatabaseError) as error:
-        logger.error(error)
+    def get_data(self, last_update_time=None):
+        cursor = self.connection.cursor()
+        try:
+            if last_update_time:
+                cursor.execute(last_update_query % last_update_time)
+            else:
+                cursor.execute(all_data_query)
+            row = cursor.fetchall()
+            set_last_update()
+            return row
+        except (Exception, DatabaseError) as error:
+            logger.error(error)
 

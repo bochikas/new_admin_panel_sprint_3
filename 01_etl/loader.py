@@ -6,7 +6,7 @@ from config import es_schema_path, index_name
 logger = logging.getLogger(__name__)
 
 
-@backoff()
+@backoff(loger=logger)
 def create_index(es):
     with open(es_schema_path, 'r') as file:
         data = file.read()
