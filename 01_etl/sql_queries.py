@@ -13,8 +13,7 @@ last_update_query = """
         JSON_AGG(DISTINCT jsonb_build_object('id', p.id, 'name', p.full_name))
         FILTER(WHERE pfw.role = 'actor') AS actors,
         JSON_AGG(DISTINCT jsonb_build_object('id', p.id, 'name', p.full_name))
-        FILTER(WHERE pfw.role = 'writer') AS writers,
-        fw.updated_at
+        FILTER(WHERE pfw.role = 'writer') AS writers
         FROM film_work fw
         LEFT OUTER JOIN genre_film_work gfw ON (fw.id = gfw.film_work_id)
         LEFT OUTER JOIN genre g ON (gfw.genre_id = g.id)

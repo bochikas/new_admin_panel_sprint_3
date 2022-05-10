@@ -16,12 +16,9 @@ class ESLoader:
     def create_index(self):
         with open(es_schema_path, 'r') as file:
             data = file.read()
-            try:
-                self.es_conn.indices.create(index=self.index_name, body=data)
-            except Exception as ex:
-                logger.error(ex)
-            else:
-                logger.info('Создание индекса завершено')
+
+        self.es_conn.indices.create(index=self.index_name, body=data)
+        logger.info('Создание индекса завершено')
 
     @backoff(loger=logger)
     def bulk_create(self, entries, state):

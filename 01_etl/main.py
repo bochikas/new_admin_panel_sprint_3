@@ -25,12 +25,12 @@ def main():
     if not es_conn.indices.exists(index=index_name):
         loader.create_index()
 
-    last_state = state.get_state(last_state_key)
-    pg_data = extractor.get_data(last_state)
+    last_update_time = state.get_state(last_state_key)
+    pg_data = extractor.get_data(last_update_time)
 
-    if pg_data:
-        entries = transformer.compile_data(pg_data)
-        return loader.bulk_create(entries, state)
+    for batch in pg_data:
+        entries = transformer.compile_data(batch)
+        loader.bulk_create(entries, state)
 
 
 @backoff(loger=logger)

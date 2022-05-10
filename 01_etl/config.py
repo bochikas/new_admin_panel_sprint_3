@@ -8,7 +8,7 @@ dotenv_path = os.path.join(os.path.dirname(__file__), 'addons/.env')
 load_dotenv(dotenv_path)
 
 index_name = os.getenv('ES_INDEX')
-
+BATCH_SIZE = 100
 last_state_key = 'last_update'
 state_file_path = os.path.abspath('addons/last_state.json')
 
