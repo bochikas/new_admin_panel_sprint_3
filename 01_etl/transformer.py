@@ -1,3 +1,4 @@
+from config import index_name
 from models import Movie
 
 
@@ -17,7 +18,7 @@ def create_data_for_elastic(data):
 
     out = list()
     for entry in entries:
-        index_template = {"index": {"_index": "movies", "_id": str(entry.id)}}
+        index_template = {"index": {"_index": index_name, "_id": str(entry.id)}}
         data_template = {
             "id": str(entry.id), "imdb_rating": entry.imdb_rating,
             "genre": entry.genre, "title": entry.title,

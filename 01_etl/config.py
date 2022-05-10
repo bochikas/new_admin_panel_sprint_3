@@ -8,6 +8,9 @@ load_dotenv(dotenv_path)
 
 index_name = os.getenv('INDEX_NAME')
 
+es_schema_path = os.path.abspath('addons/es_schema.json')
+last_state_file_path = os.path.abspath('addons/last_state.json')
+
 pg_dsl = {
         'dbname': os.getenv('POSTGRES_DB'),
         'user': os.getenv('POSTGRES_USER'),

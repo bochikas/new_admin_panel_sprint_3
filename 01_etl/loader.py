@@ -1,4 +1,3 @@
-import os
 import json
 import logging
 import datetime
@@ -7,11 +6,8 @@ import psycopg2
 import elasticsearch
 
 from backoff import backoff
-from config import es_dsl, index_name, pg_dsl
+from config import es_dsl, es_schema_path, index_name, last_state_file_path, pg_dsl
 from sql_queries import last_update_query
-
-es_schema_path = os.path.abspath('addons/es_schema.json')
-last_state_file_path = os.path.abspath('addons/last_state.json')
 
 logger = logging.getLogger(__name__)
 
