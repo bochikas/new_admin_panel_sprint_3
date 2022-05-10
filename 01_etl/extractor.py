@@ -17,6 +17,12 @@ class PostgresExtractor:
 
     @backoff(loger=logger)
     def get_data(self, last_update_time: datetime) -> Generator[list]:
+        """
+        Получение данных из PostgreSQL для загрузки в ElasticSearch
+
+        :param last_update_time: время последнего обновления данных
+        :return: генератор с записями
+        """
         cursor = self.connection.cursor()
 
         try:

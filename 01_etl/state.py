@@ -21,10 +21,21 @@ class JsonFileStorage(BaseStorage):
         self.file_path = file_path
 
     def save_state(self, state: dict) -> None:
+        """
+        Сохранение текущего состояния
+
+        :param state: текущее состояние для сохранения
+        :return: None
+        """
         with open(self.file_path, 'w') as fp:
             json.dump(state, fp)
 
     def retrieve_state(self) -> dict:
+        """
+        Получение текущего состояния
+
+        :return: словарь состояния
+        """
         if not self.file_path:
             return {}
         try:

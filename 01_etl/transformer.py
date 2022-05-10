@@ -11,6 +11,12 @@ logger = logging.getLogger(__name__)
 class Transformer:
     @backoff(loger=logger)
     def prepare_entries(self, data: List[tuple]) -> List[Movie]:
+        """
+        Преобразование списка сырых записей в список объектов модели Movie
+
+        :param data: список записей для обработки
+        :return: список объектов модели Movie
+        """
         entries = list()
         for idx, rating, genre, title, descr, director, actors_n, writers_n, actors, writers in data:
             entry = Movie(
@@ -22,6 +28,12 @@ class Transformer:
 
     @backoff(loger=logger)
     def compile_data(self, data: List[tuple]) -> List[dict]:
+        """
+        Подготовка записей для загрузки в Elasticsearch
+
+        :param data: список записей для обработки
+        :return: список подготовленных записей для загрузки в Elasticsearch
+        """
         entries = self.prepare_entries(data)
 
         out = list()

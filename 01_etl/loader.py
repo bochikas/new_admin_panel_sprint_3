@@ -18,6 +18,10 @@ class ESLoader:
 
     @backoff(loger=logger)
     def create_index(self) -> None:
+        """
+        Создание индекса
+        :return: None
+        """
         with open(es_schema_path, 'r') as file:
             data = file.read()
 
@@ -26,6 +30,13 @@ class ESLoader:
 
     @backoff(loger=logger)
     def bulk_create(self, entries: List[dict], state: State) -> None:
+        """
+        Массовое создание документов в Elasticsearch
+
+        :param entries: список записей в виде объектов модели Movie
+        :param state: объект класса State для хранения состояний
+        :return: None
+        """
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         state.set_state(last_state_key, now)
 

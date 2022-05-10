@@ -5,7 +5,7 @@ from typing import Tuple
 import elasticsearch
 import psycopg2
 from elasticsearch.client import Elasticsearch
-from psycopg2.extensions import connection, cursor
+from psycopg2.extensions import connection
 
 from backoff import backoff
 from config import (
@@ -39,6 +39,11 @@ def main() -> None:
 
 @backoff(loger=logger)
 def connect() -> Tuple[Elasticsearch, connection]:
+    """
+    Подключение к Elasticsearch и PostgreSQL
+
+    :return: Клиенты соединений Postgre и Elastic
+    """
     es_conn = elasticsearch.Elasticsearch([ESSettings().host], request_timeout=300)
     pg_conn = psycopg2.connect(**PostgresSettings().dict())
     return es_conn, pg_conn
