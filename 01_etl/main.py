@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import elasticsearch
 
@@ -30,5 +31,7 @@ def main():
 
 if __name__ == '__main__':
     es = elasticsearch.Elasticsearch([es_dsl], request_timeout=300)
+    while True:
+        main()
 
-    main()
+        time.sleep(10)
