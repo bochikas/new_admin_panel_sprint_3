@@ -7,7 +7,7 @@ import psycopg2
 
 from config import index_name, ESSettings, PostgresSettings
 from utils import backoff, get_last_update
-from loader import create_index
+from loader import ESLoader
 from transformer import Transformer
 from extractor import PostgresExtractor
 
@@ -18,13 +18,14 @@ def main():
     es_conn, pg_conn = connect()
     extractor = PostgresExtractor(pg_conn)
     transformer = Transformer()
+    loader = ESLoader(es_conn, index_name)
 
     if not es_conn.indices.exists(index=index_name):
-        create_index(es_conn)
+        loader.create_index()
         initial_data = extractor.get_data()
         entries = transformer.compile_data(initial_data)
 
-        return es_conn.bulk(index=index_name, body=entries)
+        return loader.bulk_create(entries)
 
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     last_updated_time = get_last_update()
@@ -33,7 +34,7 @@ def main():
     if now > last_updated_time and updated_data:
         entries = transformer.compile_data(updated_data)
 
-        return es_conn.bulk(index=index_name, body=entries)
+        return loader.bulk_create(entries)
 
 
 @backoff(loger=logger)

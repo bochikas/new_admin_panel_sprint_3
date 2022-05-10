@@ -1,8 +1,14 @@
+import logging
+
 from config import index_name
 from models import Movie
+from utils import backoff
+
+logger = logging.getLogger(__name__)
 
 
 class Transformer:
+    @backoff(loger=logger)
     def prepare_entries(self, data):
         entries = list()
         for idx, rating, genre, title, descr, director, actors_n, writers_n, actors, writers in data:
@@ -13,6 +19,7 @@ class Transformer:
             entries.append(entry)
         return entries
 
+    @backoff(loger=logger)
     def compile_data(self, data):
         entries = self.prepare_entries(data)
 
