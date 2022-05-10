@@ -24,11 +24,14 @@ class JsonFileStorage(BaseStorage):
             json.dump(state, fp)
 
     def retrieve_state(self) -> dict:
-        with open(self.file_path, 'r') as fp:
-            try:
-                return json.load(fp)
-            except json.decoder.JSONDecodeError:
-                return {}
+        if not self.file_path:
+            return {}
+        try:
+            with open(self.file_path, 'r') as fp:
+                state = json.load(fp)
+            return state
+        except FileNotFoundError:
+            self.save_state({})
 
 
 class State:
@@ -40,6 +43,7 @@ class State:
 
     def __init__(self, storage: BaseStorage):
         self.storage = storage
+        self.data = storage.retrieve_state()
 
     def set_state(self, key: str, value: Any) -> None:
         """Установить состояние для определённого ключа"""
@@ -47,5 +51,4 @@ class State:
 
     def get_state(self, key: str) -> Any:
         """Получить состояние по определённому ключу"""
-        data = self.storage.retrieve_state()
-        return data.get(key, None)
+        return self.data.get(key, None)

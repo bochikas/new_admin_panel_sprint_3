@@ -9,8 +9,10 @@ load_dotenv(dotenv_path)
 
 index_name = os.getenv('ES_INDEX')
 
+last_state_key = 'last_update'
+state_file_path = os.path.abspath('addons/last_state.json')
+
 es_schema_path = os.path.abspath('addons/es_schema.json')
-last_state_file_path = os.path.abspath('addons/last_state.json')
 
 
 class PostgresSettings(BaseSettings):

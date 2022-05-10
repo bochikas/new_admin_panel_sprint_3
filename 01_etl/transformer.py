@@ -2,7 +2,7 @@ import logging
 
 from config import index_name
 from models import Movie
-from utils import backoff
+from backoff import backoff
 
 logger = logging.getLogger(__name__)
 

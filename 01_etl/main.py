@@ -1,40 +1,36 @@
-import datetime
 import logging
 import time
 
 import elasticsearch
 import psycopg2
 
-from config import index_name, ESSettings, PostgresSettings
-from utils import backoff, get_last_update
-from loader import ESLoader
-from transformer import Transformer
+from backoff import backoff
+from config import index_name, ESSettings, PostgresSettings, state_file_path, last_state_key
 from extractor import PostgresExtractor
+from loader import ESLoader
+from state import JsonFileStorage, State
+from transformer import Transformer
 
 logger = logging.getLogger(__name__)
 
 
 def main():
     es_conn, pg_conn = connect()
+    storage = JsonFileStorage(state_file_path)
+    state = State(storage)
     extractor = PostgresExtractor(pg_conn)
     transformer = Transformer()
     loader = ESLoader(es_conn, index_name)
 
     if not es_conn.indices.exists(index=index_name):
         loader.create_index()
-        initial_data = extractor.get_data()
-        entries = transformer.compile_data(initial_data)
 
-        return loader.bulk_create(entries)
+    last_state = state.get_state(last_state_key)
+    pg_data = extractor.get_data(last_state)
 
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    last_updated_time = get_last_update()
-    updated_data = extractor.get_data(last_updated_time)
-
-    if now > last_updated_time and updated_data:
-        entries = transformer.compile_data(updated_data)
-
-        return loader.bulk_create(entries)
+    if pg_data:
+        entries = transformer.compile_data(pg_data)
+        return loader.bulk_create(entries, state)
 
 
 @backoff(loger=logger)
