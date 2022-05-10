@@ -1,19 +1,23 @@
 import logging
 import datetime
+from typing import List
 
-from config import es_schema_path, last_state_key
+from elasticsearch.client import Elasticsearch
+
 from backoff import backoff
+from config import es_schema_path, last_state_key
+from state import State
 
 logger = logging.getLogger(__name__)
 
 
 class ESLoader:
-    def __init__(self, connection, index_name):
+    def __init__(self, connection: Elasticsearch, index_name: str) -> None:
         self.es_conn = connection
         self.index_name = index_name
 
     @backoff(loger=logger)
-    def create_index(self):
+    def create_index(self) -> None:
         with open(es_schema_path, 'r') as file:
             data = file.read()
 
@@ -21,8 +25,8 @@ class ESLoader:
         logger.info('Создание индекса завершено')
 
     @backoff(loger=logger)
-    def bulk_create(self, entries, state):
+    def bulk_create(self, entries: List[dict], state: State) -> None:
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         state.set_state(last_state_key, now)
 
-        return self.es_conn.bulk(index=self.index_name, body=entries)
+        self.es_conn.bulk(index=self.index_name, body=entries)

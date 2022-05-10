@@ -1,4 +1,8 @@
+import datetime
 import logging
+from typing import Generator
+
+from psycopg2.extensions import connection
 
 from backoff import backoff
 from sql_queries import all_data_query
@@ -7,12 +11,12 @@ logger = logging.getLogger(__name__)
 
 
 class PostgresExtractor:
-    def __init__(self, connection, batch_size):
-        self.connection = connection
+    def __init__(self, conn: connection, batch_size: int) -> None:
+        self.connection = conn
         self.limit = batch_size
 
     @backoff(loger=logger)
-    def get_data(self, last_update_time):
+    def get_data(self, last_update_time: datetime) -> Generator[list]:
         cursor = self.connection.cursor()
 
         try:

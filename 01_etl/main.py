@@ -1,8 +1,11 @@
 import logging
 import time
+from typing import Tuple
 
 import elasticsearch
 import psycopg2
+from elasticsearch.client import Elasticsearch
+from psycopg2.extensions import connection, cursor
 
 from backoff import backoff
 from config import (
@@ -15,7 +18,7 @@ from transformer import Transformer
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main() -> None:
     es_conn, pg_conn = connect()
     storage = JsonFileStorage(state_file_path)
     state = State(storage)
@@ -35,7 +38,7 @@ def main():
 
 
 @backoff(loger=logger)
-def connect():
+def connect() -> Tuple[Elasticsearch, connection]:
     es_conn = elasticsearch.Elasticsearch([ESSettings().host], request_timeout=300)
     pg_conn = psycopg2.connect(**PostgresSettings().dict())
     return es_conn, pg_conn
