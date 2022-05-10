@@ -5,7 +5,8 @@ import elasticsearch
 import psycopg2
 
 from backoff import backoff
-from config import index_name, ESSettings, PostgresSettings, state_file_path, last_state_key
+from config import (
+    index_name, ESSettings, PostgresSettings, state_file_path, last_state_key, batch_size)
 from extractor import PostgresExtractor
 from loader import ESLoader
 from state import JsonFileStorage, State
@@ -18,7 +19,7 @@ def main():
     es_conn, pg_conn = connect()
     storage = JsonFileStorage(state_file_path)
     state = State(storage)
-    extractor = PostgresExtractor(pg_conn)
+    extractor = PostgresExtractor(pg_conn, batch_size)
     transformer = Transformer()
     loader = ESLoader(es_conn, index_name)
 

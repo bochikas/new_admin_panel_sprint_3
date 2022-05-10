@@ -1,4 +1,5 @@
 import abc
+import datetime
 import json
 from typing import Any, Optional
 
@@ -53,4 +54,4 @@ class State:
 
     def get_state(self, key: str) -> Any:
         """Получить состояние по определённому ключу"""
-        return self.data.get(key, None)
+        return self.data.get(key) if self.data.get(key) else datetime.datetime.min
