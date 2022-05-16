@@ -16,20 +16,20 @@ class PostgresExtractor:
         self.limit = batch_size
 
     @backoff(loger=logger)
-    def get_data(self, last_update_time: datetime) -> Generator[list]:
+    def get_data(self, last_update_time: datetime) -> Generator[list, None, None]:
         """
         Получение данных из PostgreSQL для загрузки в ElasticSearch
 
         :param last_update_time: время последнего обновления данных
         :return: генератор с записями
         """
-        cursor = self.connection.cursor()
 
         try:
-            cursor.execute(all_data_query % last_update_time)
+            with self.connection.cursor() as cursor:
+                cursor.execute(all_data_query % last_update_time)
 
-            while data := cursor.fetchmany(self.limit):
-                yield data
+                while data := cursor.fetchmany(self.limit):
+                    yield data
 
         except Exception as error:
             logger.error(error)

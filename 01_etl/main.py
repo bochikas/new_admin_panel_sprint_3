@@ -13,7 +13,7 @@ from config import (
 from extractor import PostgresExtractor
 from loader import ESLoader
 from state import JsonFileStorage, State
-from transformer import Transformer
+from transformer import PGToESTransformer
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ def main() -> None:
     storage = JsonFileStorage(state_file_path)
     state = State(storage)
     extractor = PostgresExtractor(pg_conn, batch_size)
-    transformer = Transformer()
+    transformer = PGToESTransformer()
     loader = ESLoader(es_conn, index_name)
 
     if not es_conn.indices.exists(index=index_name):

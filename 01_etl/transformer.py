@@ -8,7 +8,7 @@ from backoff import backoff
 logger = logging.getLogger(__name__)
 
 
-class Transformer:
+class PGToESTransformer:
     @backoff(loger=logger)
     def prepare_entries(self, data: List[tuple]) -> List[Movie]:
         """
@@ -39,13 +39,13 @@ class Transformer:
         out = list()
         for entry in entries:
             index_template = {"index": {"_index": index_name, "_id": str(entry.id)}}
-            data_template = {
+            entry_template = {
                 "id": str(entry.id), "imdb_rating": entry.imdb_rating,
                 "genre": entry.genre, "title": entry.title,
                 "description": entry.description, "director": entry.director,
                 "actors_names": entry.actors_names, "writers": entry.writers,
                 "writers_names": entry.writers_names, "actors": entry.actors,}
             out.append(index_template)
-            out.append(data_template)
+            out.append(entry_template)
 
         return out
